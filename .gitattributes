@@ -1,0 +1,12 @@
+# Normalize line endings to LF for all text files, so the project behaves the
+# same on Windows as on macOS and Linux inside the Linux devcontainer.
+* text=auto eol=lf
+
+*.tf   text eol=lf
+*.hcl  text eol=lf
+*.sh   text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+
+*.png binary
+*.pdf binary

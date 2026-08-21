@@ -1,0 +1,49 @@
+# A small workload used to prove what an identity may and may not do.
+#
+# This file deliberately sets no namespace. The namespace comes from the -n flag
+# at apply time, so the same file can be applied into a namespace where a grant
+# allows it and into one where it does not. Pinning the namespace here would
+# turn the second case into a client-side mismatch error instead of the refusal
+# from the API server that we want to see.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.30.4
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  type: ClusterIP
+  selector:
+    app: nginx
+  ports:
+    - port: 80
+      targetPort: 80

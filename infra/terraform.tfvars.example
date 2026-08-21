@@ -1,0 +1,9 @@
+# Copy to terraform.tfvars and adjust. terraform.tfvars is gitignored.
+
+cluster_name = "eks-access-management"
+
+# Access entries only. This is set explicitly rather than left to the default so
+# that the value is visible when a section needs a different one. The mode is
+# fixed when the cluster is created: the legacy aws-auth ConfigMap path cannot
+# be enabled later, and once access entries are on they cannot be turned off.
+authentication_mode = "API"

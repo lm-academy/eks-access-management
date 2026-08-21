@@ -1,0 +1,63 @@
+{
+  "name": "EKS Access Management",
+
+  // Base image is pinned to a specific Ubuntu tag. For maximum long-term
+  // reproducibility, replace the tag with a sha256 digest.
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+
+  // Tools are installed and pinned declaratively, so every student gets the
+  // identical toolchain regardless of host OS.
+  "features": {
+    "ghcr.io/devcontainers/features/terraform:1": {
+      "version": "1.15.8",
+      "tflint": "none",
+      "terragrunt": "none"
+    },
+    "ghcr.io/devcontainers/features/aws-cli:1": {
+      "version": "2.36.4"
+    },
+    "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
+      "version": "1.36.2",
+      "helm": "4.2.4",
+      "minikube": "none"
+    }
+  },
+
+  // Default region for every section in this topic. This is the one place the
+  // region is set for the container: change this value to work in a different
+  // region.
+  "containerEnv": {
+    "AWS_REGION": "eu-central-1"
+  },
+
+  // Persist AWS credentials and kubeconfig across container rebuilds using named
+  // volumes. Named volumes carry no host path, so this behaves identically on
+  // Windows, macOS, and Linux. Credentials never live in the image. The volume
+  // names are shared with the EKS Foundations course container on purpose, so
+  // credentials configured there carry over to this topic.
+  "mounts": [
+    "source=eks-terraform-aws,target=/home/vscode/.aws,type=volume",
+    "source=eks-terraform-kube,target=/home/vscode/.kube,type=volume"
+  ],
+
+  // Runs once on create: fixes volume ownership, applies the Oh My Zsh look
+  // (robbyrussell theme, git and aws plugins, syntax highlighting), wires up
+  // shell completion for terraform, kubectl, helm, and aws (bash and zsh), and
+  // prints the tool versions.
+  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+
+  "remoteUser": "vscode",
+
+  "customizations": {
+    "vscode": {
+      // Open zsh, not bash, as the default integrated terminal.
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      },
+      "extensions": [
+        "hashicorp.terraform",
+        "amazonwebservices.aws-toolkit-vscode"
+      ]
+    }
+  }
+}

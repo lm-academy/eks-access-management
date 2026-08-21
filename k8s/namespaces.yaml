@@ -1,0 +1,11 @@
+# The two namespaces the team identities are scoped against. Applied by an
+# administrator, before any narrower identity is exercised.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-web
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-api
