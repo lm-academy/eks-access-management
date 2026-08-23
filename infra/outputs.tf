@@ -37,3 +37,10 @@ output "update_kubeconfig_command" {
   description = "Run this to point kubectl at the new cluster."
   value       = "aws eks update-kubeconfig --name ${module.cluster.cluster_name}"
 }
+
+output "team_role_arns" {
+  description = "ARNS of the team roles, by team name"
+  value = {
+    for name, role in aws_iam_role.team : name => role.arn
+  }
+}
