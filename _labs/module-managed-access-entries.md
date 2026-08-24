@@ -20,7 +20,7 @@ The applied project with the team fully mapped: the platform administrator holds
 ## Tasks
 
 1. **Add the input to the cluster module.** Declare the variable and pass it to the community module. Nothing changes yet, because the default is empty.
-2. **Write the CI deploy role.** One IAM role, one inline policy, and an output for the role ARN, built from the documents the team roles already use. It needs no access entry of its own.
+2. **Write the CI deploy role.** One IAM role, one attachment of the cluster-describe policy the team roles already carry, and an output for the role ARN. It needs no access entry of its own.
 3. **Declare the grant in the module block.** Add the `access_entries` argument to the `module "cluster"` call with a single entry for the CI role.
 4. **Read the plan, then read the state.** Look at the addresses of the two access-entry objects the plan creates and note where they live. After applying, ask Terraform for every access-entry object in state. That list holds both routes at once, and it contains an entry you never declared anywhere. Work out where it came from.
 5. **Apply, then compare the two routes from the AWS side.** List the cluster's access entries and their policies. Decide whether an entry created through the module is distinguishable from one created as a separate resource.
@@ -28,7 +28,7 @@ The applied project with the team fully mapped: the platform administrator holds
 
 ## Done when
 
-- `terraform validate` reports the configuration is valid and the plan adds the CI role, its policy, one access entry, and one policy association.
+- `terraform validate` reports the configuration is valid and the plan adds the CI role, its policy attachment, one access entry, and one policy association.
 - Terraform state lists access entry objects at two addresses, one at the project root and one inside the cluster module, using the same two resource types.
 - The module's set contains an entry for the cluster creator that you never wrote.
 - The cluster reports six access entries, and the CI role's entry returns the same shape of result as a team role's.

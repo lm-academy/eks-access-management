@@ -15,11 +15,10 @@ The `team-web` namespace exists and holds a running workload. No service account
 - **Two files:** `infra/workload.tf` for the parameter and its read policy, and `infra/irsa.tf` for the role.
 - **One SSM parameter**, named after the cluster, of type `String`, holding any short value you like.
 - **A customer managed IAM policy** allowing `ssm:GetParameter` on that parameter's ARN and nothing else. Reference the ARN rather than writing it out, and do not widen it to the path.
-- **A managed policy, not an inline one.** A second role will need exactly this permission later.
 - **An IAM role** whose trust policy allows `sts:AssumeRoleWithWebIdentity`, with a `Federated` principal naming the cluster's OIDC provider.
 - **Two conditions on the trust policy**, both `StringEquals`. One on the `sub` claim, whose value is `system:serviceaccount:` followed by the namespace and the service account name. One on the `aud` claim, whose value is `sts.amazonaws.com`. Both condition keys are prefixed with the issuer URL.
 - **The service account this names is `reader` in `team-web`.** It does not exist yet, and the trust policy does not care.
-- **The managed policy attached to the role**, as a separate resource rather than inline.
+- **The policy attached to the role as its own resource**, which is how every permission in this project is granted. A second role attaches this same policy later.
 - **An output for the parameter's name and an output for the role's ARN.**
 
 ## Tasks
