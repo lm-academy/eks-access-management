@@ -8,14 +8,26 @@ resource "aws_eks_access_entry" "team" {
   tags = local.tags
 }
 
-resource "aws_eks_access_policy_association" "team" {
-  for_each = aws_eks_access_entry.team
+moved {
+  from = aws_eks_access_policy_association.team["platform-admin"]
+  to   = aws_eks_access_policy_association.team["platform-admin_admin"]
+}
 
-  cluster_name  = module.cluster.cluster_name
-  policy_arn    = local.team_access_policies[each.key]
-  principal_arn = each.value.principal_arn
+moved {
+  from = aws_eks_access_policy_association.team["developer"]
+  to   = aws_eks_access_policy_association.team["developer_view"]
+}
+
+resource "aws_eks_access_policy_association" "team" {
+  for_each = local.team_policy_associations
+
+  cluster_name = module.cluster.cluster_name
+
+  policy_arn    = each.value.policy_arn
+  principal_arn = aws_eks_access_entry.team[each.value.team].principal_arn
 
   access_scope {
-    type       = "cluster"
+    type       = each.value.access_scope.type
+    namespaces = each.value.access_scope.namespaces
   }
 }
