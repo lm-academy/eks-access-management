@@ -13,5 +13,20 @@ module "cluster" {
   cluster_name        = var.cluster_name
   authentication_mode = var.authentication_mode
 
+  access_entries = {
+    "ci-deployer" = {
+      principal_arn = aws_iam_role.ci_deployer.arn
+      tags          = local.tags
+      policy_associations = {
+        deploy = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSEditPolicy"
+          access_scope = {
+            type       = "namespace"
+            namespaces = ["team-web"]
+          }
+        }
+      }
+    }
+  }
   tags = local.tags
 }

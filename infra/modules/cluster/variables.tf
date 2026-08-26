@@ -48,6 +48,25 @@ variable "public_access_cidrs" {
   default     = ["0.0.0.0/0"]
 }
 
+variable "access_entries" {
+  description = "Map of access entries to add to the cluster."
+  type = map(object({
+    principal_arn = string
+    type          = optional(string, "STANDARD")
+    tags          = optional(map(string), {})
+
+    # Access policy association
+    policy_associations = optional(map(object({
+      policy_arn = string
+      access_scope = object({
+        namespaces = optional(list(string))
+        type       = string
+      })
+    })), {})
+  }))
+  default = {}
+}
+
 # Node Groups
 
 variable "node_instance_types" {

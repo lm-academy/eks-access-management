@@ -7,6 +7,7 @@ module "eks" {
 
   authentication_mode                      = var.authentication_mode
   enable_cluster_creator_admin_permissions = true
+  access_entries                           = var.access_entries
 
   endpoint_public_access       = var.endpoint_public_access
   endpoint_public_access_cidrs = var.public_access_cidrs
