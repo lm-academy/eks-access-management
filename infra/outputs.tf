@@ -44,3 +44,8 @@ output "team_role_arns" {
     for name, role in aws_iam_role.team : name => role.arn
   }
 }
+
+output "greeting_parameter_name" {
+  description = "Name of the parameter the workload reads."
+  value       = aws_ssm_parameter.greeting.name
+}
