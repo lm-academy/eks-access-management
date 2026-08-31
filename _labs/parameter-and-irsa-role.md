@@ -27,16 +27,12 @@ The `team-web` namespace exists and holds a running workload. No service account
 2. **Write the trust policy document.** This is the part worth slowing down for. The principal is federated, the action is the web identity variant of assume role, and the two condition keys are built from the issuer URL the cluster module hands you.
 3. **Write the role and attach the policy.** Output the role ARN, because the manifest that follows needs it.
 4. **Apply.** Four resources, and none of them touch the cluster.
-5. **Read the trust policy back from AWS.** Confirm both conditions are present, and that the provider named in it belongs to this cluster rather than another one in the same account.
-6. **Confirm nothing can assume the role.** Try it the ordinary way, as yourself, and read the refusal. Then say precisely why an administrator being refused is the correct outcome.
+5. **Read the trust policy back, then try to assume the role as yourself.** Confirm both conditions are stored as you wrote them, and read the refusal. Say precisely why an administrator being refused is the correct outcome.
 
 ## Done when
 
 - `terraform apply` adds four resources, and `terraform validate` reports the configuration is valid.
-- The parameter exists and you can read its value with the AWS CLI as yourself.
 - The role's trust policy shows a `Federated` principal, the action `sts:AssumeRoleWithWebIdentity`, and both `StringEquals` conditions.
-- The provider ARN in it ends with the same issuer ID `describe-cluster` reports for this cluster.
-- The read policy is attached and grants `ssm:GetParameter` on exactly one resource ARN.
 - Assuming the role with `aws sts assume-role` is refused with **AccessDenied**.
 
 ## Note

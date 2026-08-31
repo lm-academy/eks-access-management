@@ -25,8 +25,6 @@ You add one Terraform resource, one manifest, and one word of an existing manife
 3. **Write the service account and create it.** Then look at the object the cluster stored and confirm there is nothing on it beyond a name and a namespace.
 4. **Repoint the probe and rerun it.** Delete the existing pod, change the one line, and apply. Give the association a moment to propagate before reading the logs.
 5. **Read both logs.** The first container reports an identity, and it is neither the node nor the federated role. The second returns the parameter value, through a permission attached to a different role than the one that returned it last time.
-6. **Compare the two credential paths from inside the pod.** Ask the running pod which AWS environment variables it was given, and compare the names with the ones the federated run produced. Most of the list is identical. Exactly two names change, and they are the two that carry the credentials.
-7. **Confirm both mechanisms are live at once.** The federated service account still exists, its role still trusts the OIDC provider, and neither path interfered with the other.
 
 ## Done when
 
@@ -34,8 +32,7 @@ You add one Terraform resource, one manifest, and one word of an existing manife
 - The cluster reports one association, naming `team-web`, `reader-podid`, and the `-reader-podid` role.
 - `kubectl get sa reader-podid -n team-web -o yaml` shows no `annotations` key at all.
 - The probe reaches **Completed**, reporting an ARN containing the `-reader-podid` role name and returning the parameter value.
-- The pod's environment holds `AWS_CONTAINER_CREDENTIALS_FULL_URI` and `AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE`, and neither `AWS_ROLE_ARN` nor `AWS_WEB_IDENTITY_TOKEN_FILE`.
-- The `reader` service account still carries its annotation, and the federated role's trust policy is unchanged.
+- The `reader` service account and its annotation are still there, untouched.
 
 ## Note
 

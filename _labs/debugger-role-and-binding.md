@@ -28,22 +28,20 @@ Terraform is not involved here. Both objects you write are Kubernetes manifests 
 2. **Write the Role and the RoleBinding.** One file, two objects separated by a document break. The Role names the subresource and the verb; the RoleBinding names the group as a subject and points back at the Role by name.
 3. **Apply the file as the platform administrator.** Confirm both objects exist in `team-api`.
 4. **Ask whether the group may exec.** Use impersonation to put the question as a member of `debuggers`, first about `team-api`, then about `team-web`, then once more without the group. Impersonating a group requires a username as well, and it does not have to exist anywhere. Name the subresource with kubectl's dedicated flag rather than writing it after a slash.
-5. **List everything the impersonated user may do.** The rule you just wrote appears in full, alongside the handful of rules every authenticated user gets.
-6. **Try the exec itself, still impersonating.** It fails, and it does not fail on the exec. Read the error, name the missing permission, and work out why a Role granting exec alone cannot produce a working shell.
+5. **Try the exec itself, still impersonating.** It fails, and it does not fail on the exec. Read the error, name the missing permission, and work out why a Role granting exec alone cannot produce a working shell.
 
 ## Done when
 
 - `k8s/debugger-rbac.yaml` holds a Role and a RoleBinding, both in `team-api`, and applying it creates both.
 - The nginx Deployment reports two ready replicas in `team-api`.
 - Asked as a member of `debuggers`, the API server answers **yes** for creating `pods/exec` in `team-api`, **no** for `team-web`, and **no** without the group.
-- The impersonated user's permission list shows the exec rule next to the standard discovery rules, under a warning about an incomplete list, and that identity may not read pods.
 - Running the exec while impersonating is refused, naming **pods** and the verb **get**, not exec.
 
 ## Note
 
-Impersonation forces the request through Kubernetes RBAC and drops access policies entirely, so the answer is about your Role and your RoleBinding and nothing else. That is what lets you test the pair before a real principal carries the group. RBAC also takes effect as soon as the API server sees it, so nothing here needs a propagation wait.
+Impersonation answers from Kubernetes RBAC alone, so it tells you whether your Role and your RoleBinding work before any real principal carries the group. RBAC also takes effect as soon as the API server sees it, so nothing here needs a propagation wait.
 
-Write the subresource with kubectl's `--subresource` flag. Asking about `pods/exec` in one word reads `exec` as the name of a pod, so the command answers a different question and returns `no`. Nothing warns you, and the only way to notice is to know it.
+Write the subresource with kubectl's `--subresource` flag. Asking about `pods/exec` in one word reads `exec` as the name of a pod, so the command answers a different question and returns `no`. Nothing warns you.
 
 A RoleBinding will happily name a group nobody carries, so a binding that grants nothing looks exactly like a binding that grants something.
 

@@ -25,17 +25,14 @@ You add `infra/pod_identity.tf` and no Kubernetes manifests.
 1. **Add the agent and apply it on its own.** One resource, naming the cluster and the addon. Applying it before the IAM work lets you watch the DaemonSet arrive and confirms the addon is the only cluster-side thing this mechanism installs.
 2. **Write the trust policy document.** Put it next to the federated role's document and write it by subtraction. Every line that ties the federated role to one cluster and one service account has no counterpart here.
 3. **Write the role and attach the existing policy.** Reference the policy resource you already have rather than pasting its ARN, and output the new role's ARN.
-4. **Apply, then confirm the agent is serving on every node.** One agent pod per node, all of them ready.
-5. **Read the trust policy back from AWS.** Confirm the principal is a service, both actions are present, and the document contains no condition at all.
-6. **Confirm one policy now sits on two roles, and that nothing uses the new one.** Ask IAM which roles the read policy is attached to, then ask the cluster for its Pod Identity associations. The second answer is empty, and that is the lab finishing correctly.
+4. **Apply.** Two more resources, and the role ARN comes out as an output.
+5. **Read the trust policy back, then ask the cluster what is bound to the role.** Confirm the principal is a service, both actions are present, and the document contains no condition at all. The association list is empty, and that is the lab finishing correctly.
 
 ## Done when
 
 - Two applies add three resources between them, and `terraform validate` reports the configuration is valid.
-- The `eks-pod-identity-agent` addon reports status **ACTIVE** with no health issues.
-- The `eks-pod-identity-agent` DaemonSet in `kube-system` reports one ready pod per node.
+- The `eks-pod-identity-agent` DaemonSet in `kube-system` runs one pod per node, all of them ready.
 - The new role's trust policy shows a `Service` principal of `pods.eks.amazonaws.com`, both `sts:AssumeRole` and `sts:TagSession`, and no `Condition` key.
-- The `read-greeting` policy lists two attached roles, the federated one and the new one.
 - The cluster reports zero Pod Identity associations.
 
 ## Note
@@ -44,6 +41,6 @@ Write the two trust policies side by side and the lesson is on screen without an
 
 `sts:TagSession` is not optional and the failure is not obvious. EKS attaches session tags on every assume it performs for a pod, so a trust policy allowing only `sts:AssumeRole` refuses the assume and the workload never gets credentials. The pod reports `Unauthorized Exception! EKS does not have permissions to assume the associated role`, which names neither tags nor the missing action.
 
-The role is finished and inert. What decides whether it is ever used is who may create an association naming it, an IAM permission held outside the cluster. You also pinned no addon version, so read back which one EKS chose.
+The role is finished and inert. What decides whether it is ever used is who may create an association naming it, an IAM permission held outside the cluster.
 
 Everything in this lab is free.
