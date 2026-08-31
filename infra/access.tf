@@ -5,6 +5,8 @@ resource "aws_eks_access_entry" "team" {
   principal_arn = each.value.arn
   type          = "STANDARD"
 
+  kubernetes_groups = lookup(local.team_kubernetes_groups, each.key, [])
+
   tags = local.tags
 }
 

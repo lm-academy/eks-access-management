@@ -2,6 +2,9 @@ locals {
   # Applied by the provider to every resource in this root, and passed into the
   # cluster module for the resources it creates.
   team_roles = ["developer", "platform-admin"]
+  team_kubernetes_groups = {
+    developer = ["debuggers"]
+  }
 
   team_policy_associations = {
     "developer_view" = {
