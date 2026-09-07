@@ -49,3 +49,8 @@ output "greeting_parameter_name" {
   description = "Name of the parameter the workload reads."
   value       = aws_ssm_parameter.greeting.name
 }
+
+output "reader_role_arn" {
+  description = "ARN of the role the reader service account assumes."
+  value       = aws_iam_role.reader.arn
+}
