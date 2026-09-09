@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: reader
+  namespace: team-web
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::267049704011:role/eks-access-management-reader

@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: aws-identity-probe
+  namespace: team-web
+spec:
+  serviceAccountName: reader
+  restartPolicy: Never
+  containers:
+    - name: whoami
+      image: public.ecr.aws/aws-cli/aws-cli:2.36.4
+      command:
+        - aws
+        - sts
+        - get-caller-identity
+    - name: read-parameter
+      image: public.ecr.aws/aws-cli/aws-cli:2.36.4
+      command:
+        - aws
+        - ssm
+        - get-parameter
+        - --name
+        - /eks-access-management/greeting
+        - --query
+        - Parameter.Value
+        - --output
+        - text
