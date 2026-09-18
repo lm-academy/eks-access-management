@@ -54,3 +54,8 @@ output "reader_role_arn" {
   description = "ARN of the role the reader service account assumes."
   value       = aws_iam_role.reader.arn
 }
+
+output "reader_podid_role_arn" {
+  description = "ARN of the Pod Identity role"
+  value       = aws_iam_role.reader_podid.arn
+}

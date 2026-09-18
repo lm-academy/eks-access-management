@@ -4,7 +4,7 @@ metadata:
   name: aws-identity-probe
   namespace: team-web
 spec:
-  serviceAccountName: reader
+  serviceAccountName: reader-podid
   restartPolicy: Never
   containers:
     - name: whoami

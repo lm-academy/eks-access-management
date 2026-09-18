@@ -33,7 +33,11 @@ resource "aws_iam_role_policy_attachment" "reader_podid_read_greeting" {
   policy_arn = aws_iam_policy.read_greeting.arn
 }
 
-output "reader_podid_role_arn" {
-  description = "ARN of the Pod Identity role"
-  value       = aws_iam_role.reader_podid.arn
+resource "aws_eks_pod_identity_association" "reader_podid" {
+  cluster_name    = module.cluster.cluster_name
+  namespace       = "team-web"
+  service_account = "reader-podid"
+  role_arn        = aws_iam_role.reader_podid.arn
+
+  tags = local.tags
 }
